@@ -26,3 +26,25 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: Build the Docker image
+      run: docker build . --file webapp/Dockerfile --tag webapp:$(date +%s)
+    
+    - name: Docker Login, Build, Tag & Push Action
+  # You may pin to the exact commit or the version.
+  # uses: dinushchathurya/build-tag-push-action@79c0fd76d29bb5013fddeaa97262ab7622a75b5b
+      uses: dinushchathurya/build-tag-push-action@v1.2.1
+      with:
+        # Username to connect to Docker registry
+        username: ${{ secrets.DOCKER_USERNAME }}
+        # Password to connect to Docker registry
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        # Docker build context
+        context: .
+        # Docker build file
+        file: webapp/Dockerfile
+        # Docker repository owner
+        repoOwner: ${{ secrets.DOCKER_USERNAME }}
+        # Docker repository
+        repository: netwebapp
+        # Docker image tag
+        tag: $(date +%s)
